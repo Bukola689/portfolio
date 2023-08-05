@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Events\Register;
 use App\Models\User;
 use App\Notifications\RegisterNotification;
@@ -15,10 +16,7 @@ class RegisterController extends Controller
 {
     public function register(Request $request)
     {
-        $regUser = User::first();
-
-        $when = Carbon::now()->addMinute(10);
-
+       
         $data = $request->validate([
             'name' => 'required',
             'email' => 'required',
@@ -30,6 +28,18 @@ class RegisterController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        if(User::where('email', $request->email)->first()) 
+        {
+            return response()->json([
+                'message' => 'Email Already Exist',
+                'status' => 'Failed'
+            ]);
+        }
+
+        $regUser = User::first();
+
+        $when = Carbon::now()->addSeconds(10);
 
         $regUser->notify((new RegisterNotification($user))->delay($when));
 

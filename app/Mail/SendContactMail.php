@@ -12,16 +12,26 @@ class SendContactMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $contact;
+   // protected $contact;
+
+   public $name;
+
+   public $email;
+
+   public $message;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Contact $contact)
+    public function __construct( $name, $email, $message)
     {
-        $this->contact = $contact;
+        $this->name = $name;
+
+        $this->email = $email;
+
+        $this->message = $message;
     }
 
     /**
@@ -31,6 +41,9 @@ class SendContactMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('mails.contact');
+        return $this
+                   ->subject('Mail From Portfolio')
+                   ->replyTo($this->email)
+                   ->markdown('mails.contact');
     }
 }

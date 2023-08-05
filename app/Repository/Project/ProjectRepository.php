@@ -27,8 +27,8 @@ class ProjectRepository implements IProjectRepository
       $image->move('projects/image', $image_new_name);
 
       $project = new Project();
-      $project->skill_id = $request->input('skill_id');
-      $project->name = $request->input('name');
+      $project->skill_id = $request->skill_id;
+      $project->name = $request->name;
       $project->image = 'projects/image/' . $image_new_name;
       $project->project_url = $request->input('project_url');
       $project->save();

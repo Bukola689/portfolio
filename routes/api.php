@@ -1,15 +1,14 @@
 <?php
 
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Http\Request;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\LogoutController;
-use App\Http\Controllers\V1\Admin\AdminContactController;
 use App\Http\Controllers\V1\Admin\DashboardController;
 use App\Http\Controllers\V1\Admin\VerifyEmailController;
+use App\Http\Controllers\V1\Auth\LoginController;
+use App\Http\Controllers\V1\Auth\LogoutController;
+use App\Http\Controllers\V1\Auth\RegisterController;
+use App\Http\Controllers\V1\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,9 +26,18 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-    Route::post('register', [RegisterController::class, 'register']);
-    Route::post('login', [LoginController::class, 'login']);
-    Route::post('forgot-password', [ForgotPasswordController::class, 'forgotPassword']);
+      //....auth....//
+      Route::group(['prefix'=> 'auth'], function() {
+        Route::post('register', [RegisterController::class, 'register']);
+        Route::post('login', [LoginController::class, 'login']);
+        Route::post('forgot-password', [ForgotPasswordController::class, 'forgotPassword']);
+     Route::group(['middleware' => 'auth:sanctum'], function() {
+        Route::post('logout', [LogoutController::class, 'logout']);
+        Route::post('/email/verification-notification', [VerifyEmailController::class, 'resendNotification'])->name('verification.send');
+        Route::post('reset-password', [ResetPasswordController::class, 'resetPassword']); 
+
+     });
+ });
 
 
         //..Frontend..//
